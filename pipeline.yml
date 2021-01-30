@@ -1,0 +1,32 @@
+---
+resources:
+  - name: main-repo
+    type: git
+    icon: github
+    source:
+      uri: https://github.com/kharandziuk/concourse-compose
+
+jobs:
+  - name: integration
+    plan:
+      - get: main-repo
+      - task: run-integration-tests
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: amidos/dcind
+          inputs:
+            - name: main-repo
+          run:
+            path: bash
+            args:
+              - -exc
+              - |
+                source /docker-lib.sh
+                start_docker
+                cd ./main-repo
+
+                docker-compose up --exit-code-from client 

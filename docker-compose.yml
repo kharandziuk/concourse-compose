@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  server:
+    image: redis
+
+  client:
+    image: redis
+    command: redis-cli -h server -p 6379 ping
+    depends_on:
+      - server
